@@ -1,0 +1,45 @@
+Textpak
+
+Textpak is a text compression routine for the DCPU-16. By default the DCPU-16 stores one ASCII character per word.
+Textpak can compress two ASCII characters into one word, it also can uncompress the data back into two words.
+
+Functions
+
+PackTwoChars
+
+Places the low 8 bits of the contents of registers A and B into register A.
+
+Example:
+
+set a,0x00DE
+set b,0x00AD
+jsr PackTwoChars
+
+Register A now contains 0xDEAD
+
+UnPackTwoChars
+
+Places the low 8 bits of register A into register B, moves the High 8 bits of register A into its low 8 bits.
+
+Example:
+
+set a,0xBEEF
+jsr UnpackTwoChars
+
+Register A now contains 0x00BE
+Register B now contains 0x00EF
+
+PackText
+
+Compresses each word at the memory location pointed to in Register A, it stops when it reaches a memory location contain 0x0000.
+Writes the compressed words to the memory location pointed to by Register B.
+
+Example
+
+set a,unpackedtextlocation
+set b,compressedtextlocation
+jsr PackText
+
+UnPackText
+
+is the reverse of PackText
