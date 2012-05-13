@@ -1,0 +1,109 @@
+; --------------------------------------------
+; Title:   textpack
+; Author:  James Januszka
+; Date:    9/05/2012
+; Version: 0.1
+; --------------------------------------------
+
+; --------------------------------------------
+; PackTwoChars
+; A = First Character
+; B = Second Character
+; 
+; Put low bits of A and B into A
+; 
+; Return A
+; --------------------------------------------
+:PackTwoChars
+and a,0x00ff ;Strip high bits
+Shl a,8
+and b,0x00ff ;Strip high bits
+bor a,b
+set pc,pop
+
+; --------------------------------------------
+; UnpackTwoChars
+; A = Input
+;
+; put low bits of A in to B
+; SHR A,8
+;
+; Return A and B
+; --------------------------------------------
+:UnpackTwoChars
+
+set b,a
+and b,0x00ff ;Strip high bits
+shr a,8
+set pc,pop
+
+; --------------------------------------------
+; PackText
+; --------------------------------------------
+
+:PackText
+
+set push,i
+set push,j
+set push,a
+set push,b
+
+set i,a
+set j,b
+
+
+:loop
+set a,[i]
+ife a,0x0000
+	set pc,endloop
+add i,1
+	set b,[i]
+jsr PackTwoChars
+
+set [j],a
+add j,1
+ifn [i],0x0000
+	add i,1
+set pc,loop
+:endloop
+set [j],0x0000 ; Null Terminate String
+
+set b,pop
+set a,pop
+set j,pop
+set i,pop
+set pc,pop
+
+; --------------------------------------------
+; UnPackText
+; --------------------------------------------
+
+:UnPackText
+
+set push,i
+set push,j
+
+set i,a
+set push,a
+set j,b
+set push,b
+
+:loop
+set a,[i]
+ife a,0x0000
+	set pc,endloop
+jsr UnpackTwoChars
+set [j],a
+add j,1
+set [j],b
+add i,1
+add j,1
+set pc,loop
+:endloop
+set [j],0x0000 ; Null Terminate String
+
+set b,pop
+sub a,pop
+set j,pop
+set i,pop
+set pc,pop
